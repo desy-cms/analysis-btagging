@@ -18,7 +18,7 @@ int main(int argc, char ** argv)
    // if not defined, the number of jets is nJetMin from the configurations
    analyser.jetHistograms("selection01");
    analyser.jetHistograms("selection02");
-   analyser.jetHistograms("selection03");
+//   analyser.jetHistograms("selection03");
    
    for ( int i = 0 ; i < analyser.nEvents() ; ++i )
    {
@@ -37,9 +37,11 @@ int main(int argc, char ** argv)
       analyser.fillJetHistograms("selection01");               // histograms : jets fill
    // BTAG
       if ( ! analyser.selectionBJet(1)          )   continue;
+      analyser.actionApplyBtagSF(1);
       analyser.fillJetHistograms("selection02");               // histograms : jets fill
-      if ( ! analyser.selectionBJet(2)          )   continue;
-      analyser.fillJetHistograms("selection03");               // histograms : jets fill
+//      if ( ! analyser.selectionBJet(2)          )   continue;
+//      analyser.actionApplyBtagSF(2);
+//      analyser.fillJetHistograms("selection03");               // histograms : jets fill
       
    }  //end event loop
    
