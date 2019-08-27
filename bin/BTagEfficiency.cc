@@ -38,13 +38,13 @@ int main(int argc, char ** argv)
    // BTAG - test of btag only, no selection
       for ( int ib = 0; ib < config->nBJetsMin(); ++ib )
       {
-         if (   analyser.selectionBJet(ib)          )
+         int r = ib+1;
+         if (   analyser.selectionBJet(r)          )
          {
-            float sf = analyser.getBtagSF(ib);  // only retrieve scale factor to be applied to histograms below
-            analyser.fillJetHistograms(ib,Form("jet%dbtag",ib),sf);                  // histograms : jet 1 fill weighting by the SF
+            float sf = analyser.getBtagSF(r);  // only retrieve scale factor to be applied to histograms below
+            analyser.fillJetHistograms(r,Form("jet%dbtag",r),sf);                  // histograms : jet 1 fill weighting by the SF
          }
       }
-      
    }  //end event loop
    
 
