@@ -34,6 +34,8 @@ BTaggingAnalyser::BTaggingAnalyser()
 
 BTaggingAnalyser::BTaggingAnalyser(int argc, char ** argv) : BaseAnalyser(argc,argv), Analyser(argc,argv)
 {
+
+   
 }
 
 BTaggingAnalyser::~BTaggingAnalyser()
@@ -49,3 +51,138 @@ BTaggingAnalyser::~BTaggingAnalyser()
 // ------------ method called for each event  ------------
 
 
+void BTaggingAnalyser::histograms( const std::string & label)
+{
+   if ( label == "" )
+   {
+      std::cout << "-warning- BTaggingAnalyser::histograms - no label given for histograms (root directory)" << std::endl;
+      return;
+   }
+   
+   this->output()->cd();
+   if ( ! this->output()->FindObjectAny(label.c_str()) )
+   {
+      this->output()->mkdir(label.c_str());
+      this->output()->cd(label.c_str());
+   }
+   else
+   {
+      if ( h1_.find(Form("jet_hist_weight_%s",label.c_str())) != h1_.end() ) // the jet histograms already exist
+      {
+         return;
+      }
+   }
+   
+   h1_[Form("jet_hist_weight_%s",label.c_str())] = std::make_shared<TH1F>("jet_hist_weight" , Form("jet_hist_weight_%s",label.c_str()) ,1 , 0. , 1. );
+   create_histograms(label);
+   if ( config_->isMC() && config_->histogramJetsPerFlavour() )
+   {
+      for ( auto & flv : flavours_ ) // flavour dependent histograms
+      {
+         create_histograms(label,flv);
+      }
+   }
+   
+   
+}
+void BTaggingAnalyser::create_histograms( const std::string & label,  const std::string & extra )
+{
+   std::string xx = "";
+   if ( extra != "" ) xx = "_"+extra;;
+   const char * x = xx.c_str();
+   const char * l = label.c_str();
+   
+   btag_binning();
+   
+   // 1D histograms
+   h1_[Form("pt_jet_%s%s"  , l,x)]  = std::make_shared<TH1F>( Form("pt_jet%s" ,x) , Form("pt_jet_%s%s" ,l,x)  ,1500 , 0   , 1500  );
+   h1_[Form("eta_jet_%s%s" , l,x)]  = std::make_shared<TH1F>( Form("eta_jet%s",x) , Form("eta_jet_%s%s",l,x)  , 600 , -3, 3 );
+   h1_[Form("phi_jet_%s%s" , l,x)]  = std::make_shared<TH1F>( Form("phi_jet%s",x) , Form("phi_jet_%s%s",l,x)  , 360 , -180, 180 );
+   if ( config_->btagAlgorithm() != "" )
+      h1_[Form("btag_jet_%s%s", l,x)]  = std::make_shared<TH1F>(Form("btag_jet%s",x), Form("btag_jet_%s%s",l,x) , nbins_btag_, &bins_btag_[0] );
+   
+   // 2D histograms
+   h2_[Form("pt_eta_jet_%s%s",l,x)]  = std::make_shared<TH2F>(Form("pt_eta_jet%s",x) , Form("pt_eta_jet_%s%s",l,x) ,1500 , 0   , 1500, 600, -3, 3  );
+   
+   
+   // Histo titles
+   h1_[Form("pt_jet_%s%s" , l,x)] -> GetXaxis() -> SetTitle("Jet p_{T} [GeV]");
+   h1_[Form("eta_jet_%s%s", l,x)] -> GetXaxis() -> SetTitle("Jet  #eta");
+   h1_[Form("phi_jet_%s%s", l,x)] -> GetXaxis() -> SetTitle("Jet  #phi");
+   h1_[Form("btag_jet_%s%s",l,x)] -> GetXaxis() -> SetTitle("Jet btag discriminator");
+   h2_[Form("pt_eta_jet_%s%s",l,x)] -> GetXaxis() -> SetTitle("Jet p_{T} [GeV]");
+   h2_[Form("pt_eta_jet_%s%s",l,x)] -> GetYaxis() -> SetTitle("Jet #eta");
+
+}
+
+void BTaggingAnalyser::fillHistograms( const int & rank, const std::string & label )
+{
+   fill_histograms(rank,label);
+   if ( config_->isMC() && config_->histogramJetsPerFlavour() )
+   {
+      std::string flv = "udsg";
+      int j = rank-1;
+      auto jet = selectedJets_[j];
+      if ( config_ -> useJetsExtendedFlavour() )
+      {
+         flv = jet->extendedFlavour();
+      }
+      else
+      {
+         if ( abs(jet->flavour()) == 4 ) flv = "c"; 
+         if ( abs(jet->flavour()) == 5 ) flv = "b"; 
+      }
+      fill_histograms(rank,label,flv);
+   }
+   
+   
+}
+
+void BTaggingAnalyser::fill_histograms( const int & rank, const std::string & label, const std::string & extra )
+{
+   if ( rank > config_->nJetsMin() ) 
+   {
+      std::cout << "-w- BTaggingAnalyser::fillHistograms -> rank larger than min number of jets" << std::endl;
+      return;
+   }
+   if ( label == "" ) return;
+   
+   this->output()->cd();
+   this->output()->cd(label.c_str());
+   
+   std::string xx = "";
+   if ( extra != "" ) xx = "_"+extra;;
+   const char * x = xx.c_str();
+   const char * l = label.c_str();
+   
+   
+   h1_[Form("jet_hist_weight_%s",label.c_str())] -> Fill(0.,weight_);
+   
+   int j = rank-1;
+   auto jet = selectedJets_[j];
+   // 1D histograms
+   h1_[Form("pt_jet_%s%s" , l,x)]  -> Fill(jet->pt(),weight_);
+   h1_[Form("eta_jet_%s%s", l,x)]  -> Fill(jet->eta(),weight_);
+   h1_[Form("phi_jet_%s%s", l,x)]  -> Fill(jet->phi()*180./acos(-1.),weight_);
+   if ( config_->btagAlgorithm() != "")
+   {
+      float mybtag = JetAnalyser::btag(*jet,config_->btagAlgorithm());
+      h1_[Form("btag_jet_%s%s",l,x)] -> Fill(mybtag,weight_);
+   }
+   
+   // 2D histograms
+   h2_[Form("pt_eta_jet_%s%s",l,x)] -> Fill(jet->pt(), jet->eta(), weight_);
+   
+   
+}
+
+void BTaggingAnalyser::btag_binning()
+{
+   // uniform binning for btag
+   float size = 0.0002;
+   nbins_btag_ = int(1./size);
+   bins_btag_.clear();
+   for ( int i = 0; i<nbins_btag_+1; ++i)
+      bins_btag_.push_back(size*i);
+   
+}
