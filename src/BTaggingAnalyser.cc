@@ -142,7 +142,6 @@ void BTaggingAnalyser::fill_histograms( const int & rank, const std::string & la
 {
    if ( rank > config_->nJetsMin() ) 
    {
-      std::cout << "-w- BTaggingAnalyser::fillHistograms -> rank larger than min number of jets" << std::endl;
       return;
    }
    if ( label == "" ) return;
