@@ -60,20 +60,11 @@ void BTaggingAnalyser::histograms( const std::string & label)
    }
    
    this->output()->cd();
-   if ( ! this->output()->FindObjectAny(label.c_str()) )
-   {
-      this->output()->mkdir(label.c_str());
-      this->output()->cd(label.c_str());
-   }
-   else
-   {
-      if ( h1_.find(Form("jet_hist_weight_%s",label.c_str())) != h1_.end() ) // the jet histograms already exist
-      {
-         return;
-      }
-   }
+   if ( this->output()->FindObjectAny(label.c_str()) )  return;
    
-   h1_[Form("jet_hist_weight_%s",label.c_str())] = std::make_shared<TH1F>("jet_hist_weight" , Form("jet_hist_weight_%s",label.c_str()) ,1 , 0. , 1. );
+   this->output()->mkdir(label.c_str());
+   this->output()->cd(label.c_str());
+   
    create_histograms(label);
    if ( config_->isMC() && config_->histogramJetsPerFlavour() )
    {
@@ -82,7 +73,6 @@ void BTaggingAnalyser::histograms( const std::string & label)
          create_histograms(label,flv);
       }
    }
-   
    
 }
 void BTaggingAnalyser::create_histograms( const std::string & label,  const std::string & extra )
@@ -154,8 +144,6 @@ void BTaggingAnalyser::fill_histograms( const int & rank, const std::string & la
    const char * x = xx.c_str();
    const char * l = label.c_str();
    
-   
-   h1_[Form("jet_hist_weight_%s",label.c_str())] -> Fill(0.,weight_);
    
    int j = rank-1;
    auto jet = selectedJets_[j];
