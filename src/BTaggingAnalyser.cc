@@ -105,9 +105,9 @@ void BTaggingAnalyser::create_histograms( const std::string & label,  const std:
 
 }
 
-void BTaggingAnalyser::fillHistograms( const int & rank, const std::string & label )
+void BTaggingAnalyser::fillHistograms( const int & rank, const std::string & label, const float & sf )
 {
-   fill_histograms(rank,label);
+   fill_histograms(rank,label,sf);
    if ( config_->isMC() && config_->histogramJetsPerFlavour() )
    {
       std::string flv = "udsg";
@@ -122,13 +122,12 @@ void BTaggingAnalyser::fillHistograms( const int & rank, const std::string & lab
          if ( abs(jet->flavour()) == 4 ) flv = "c"; 
          if ( abs(jet->flavour()) == 5 ) flv = "b"; 
       }
-      fill_histograms(rank,label,flv);
+      fill_histograms(rank,label,sf,flv);
    }
-   
    
 }
 
-void BTaggingAnalyser::fill_histograms( const int & rank, const std::string & label, const std::string & extra )
+void BTaggingAnalyser::fill_histograms( const int & rank, const std::string & label, const float & sf, const std::string & extra )
 {
    if ( rank > config_->nJetsMin() ) 
    {
@@ -148,17 +147,17 @@ void BTaggingAnalyser::fill_histograms( const int & rank, const std::string & la
    int j = rank-1;
    auto jet = selectedJets_[j];
    // 1D histograms
-   h1_[Form("pt_jet_%s%s" , l,x)]  -> Fill(jet->pt(),weight_);
-   h1_[Form("eta_jet_%s%s", l,x)]  -> Fill(jet->eta(),weight_);
-   h1_[Form("phi_jet_%s%s", l,x)]  -> Fill(jet->phi()*180./acos(-1.),weight_);
+   h1_[Form("pt_jet_%s%s" , l,x)]  -> Fill(jet->pt(),weight_*sf);
+   h1_[Form("eta_jet_%s%s", l,x)]  -> Fill(jet->eta(),weight_*sf);
+   h1_[Form("phi_jet_%s%s", l,x)]  -> Fill(jet->phi()*180./acos(-1.),weight_*sf);
    if ( config_->btagAlgorithm() != "")
    {
       float mybtag = JetAnalyser::btag(*jet,config_->btagAlgorithm());
-      h1_[Form("btag_jet_%s%s",l,x)] -> Fill(mybtag,weight_);
+      h1_[Form("btag_jet_%s%s",l,x)] -> Fill(mybtag,weight_*sf);
    }
    
    // 2D histograms
-   h2_[Form("pt_eta_jet_%s%s",l,x)] -> Fill(jet->pt(), jet->eta(), weight_);
+   h2_[Form("pt_eta_jet_%s%s",l,x)] -> Fill(jet->pt(), jet->eta(), weight_*sf);
    
    
 }

@@ -41,8 +41,7 @@ int main(int argc, char ** argv)
          if (   analyser.selectionBJet(j1)          )
          {
             float sf = analyser.getBtagSF(j1);  // only retrieve scale factor to be applied to histograms below
-            analyser.weight(analyser.weight()*sf);
-            analyser.fillHistograms(j1,"btag_jets");
+            analyser.fillHistograms(j1,"btag_jets",sf);
          }
       }
    }  //end event loop

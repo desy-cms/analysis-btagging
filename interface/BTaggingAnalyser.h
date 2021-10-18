@@ -49,11 +49,11 @@ namespace analysis {
          private:
             void btag_binning();
             void create_histograms(const std::string & label, const std::string & extra = "");
-            void fill_histograms(const int & rank,const std::string & label, const std::string & extra = "");
+            void fill_histograms(const int & rank,const std::string & label, const float & sf, const std::string & extra = "");
                
          public:
             virtual void histograms(const std::string & label);
-            virtual void fillHistograms(const int & rank,const std::string & label);
+            virtual void fillHistograms(const int & rank, const std::string & label, const float & sf=1);
 
       };
    }
