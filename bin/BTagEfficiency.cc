@@ -16,15 +16,13 @@ int main(int argc, char ** argv)
 // HISTOGRAMS definitions  
    // create some predefined jet histograms
    // if not defined, the number of jets is nJetMin from the configurations
-   analyser.jetHistograms("kinematics");
-   analyser.jetHistograms("jet1btag");
-   analyser.jetHistograms("jet2btag");
+   analyser.histograms("all_jets");
+   analyser.histograms("btag_jets");
    
    for ( int i = 0 ; i < analyser.nEvents() ; ++i )
    {
       if ( ! analyser.event(i)                  )   continue;
       
-      analyser.actionApplyPileupWeight();                      // correction : pileup reweight
    // JETS
       analyser.actionApplyJER();                               // correction : jet energy resolution smearing
       analyser.actionApplyBjetRegression();                    // correction : jet energy regression (for b jets)
@@ -33,16 +31,18 @@ int main(int argc, char ** argv)
       if ( ! analyser.selectionNJets()          )   continue;  // selection  : number of jets 
       if ( ! analyser.selectionJet(1)           )   continue;  // selection  : jet1 pt and eta 
       if ( ! analyser.selectionJet(2)           )   continue;  // selection  : jet2 pt and eta 
-      if ( ! analyser.selectionJetDphi(1,2)     )   continue;  // selection  : delta_phi_jets (1,2) [or  MIN(neg): analyser.selectionJetDphi(1,2,-2.0) / MAX(pos): analyser.selectionJetDphi(1,2,+2.0)]
-      analyser.fillJetHistograms("kinematics");                // histograms : jets fill
+      if ( ! analyser.selectionJetDphi(1,2)     )   continue;  // selection  : delta_phi_jets (1,2) 
+      analyser.fillHistograms(1,"all_jets");
+      analyser.fillHistograms(2,"all_jets");
+      
    // BTAG - test of btag only, no selection
-      for ( int ib = 0; ib < config->nBJetsMin(); ++ib )
+      for ( int j1 = 1; j1 <= config->nBJetsMin(); ++j1 )
       {
-         int r = ib+1;
-         if (   analyser.selectionBJet(r)          )
+         if (   analyser.selectionBJet(j1)          )
          {
-            float sf = analyser.getBtagSF(r);  // only retrieve scale factor to be applied to histograms below
-            analyser.fillJetHistograms(r,Form("jet%dbtag",r),sf);                  // histograms : jet 1 fill weighting by the SF
+            float sf = analyser.getBtagSF(j1);  // only retrieve scale factor to be applied to histograms below
+            analyser.weight(analyser.weight()*sf);
+            analyser.fillHistograms(j1,"btag_jets");
          }
       }
    }  //end event loop
