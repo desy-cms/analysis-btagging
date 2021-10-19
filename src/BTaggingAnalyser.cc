@@ -222,3 +222,17 @@ bool BTaggingAnalyser::selectionLeadJetsDr()
    return ok;
    
 }
+bool BTaggingAnalyser::selectionLeadJetsMuon()
+{
+   bool ok = true;
+   for ( int j1 = 1; j1 <= this->config()->nJetsMin(); ++j1 )
+   {
+      if ( ! this->muonJet(j1) )
+      {
+         ok = false;
+         break;
+      }
+   }
+   return ok;
+   
+}

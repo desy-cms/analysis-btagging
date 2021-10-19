@@ -57,6 +57,7 @@ namespace analysis {
             virtual bool selectionLeadJets();
             virtual bool selectionLeadJetsDphi();
             virtual bool selectionLeadJetsDr();
+            virtual bool selectionLeadJetsMuon();
 
       };
    }

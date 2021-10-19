@@ -23,6 +23,10 @@ int main(int argc, char ** argv)
    {
       if ( ! analyser.event(i)                  )   continue;
       
+   // Muons
+      if ( ! analyser.selectionMuonId()         )   continue;
+      if ( ! analyser.selectionNMuons()         )   continue;
+      if ( ! analyser.selectionMuons()          )   continue;
       
    // JETS
       analyser.actionApplyJER();                               // correction : jet energy resolution smearing
@@ -33,6 +37,7 @@ int main(int argc, char ** argv)
       if ( ! analyser.selectionLeadJets()       )   continue;
       if ( ! analyser.selectionLeadJetsDphi()   )   continue;
       if ( ! analyser.selectionLeadJetsDr()     )   continue;
+      if ( ! analyser.selectionLeadJetsMuon()   )   continue;
       // all jets histograms
       for ( int j1 = 1; j1 <= config->nJetsMin(); ++j1 )
          analyser.fillHistograms(j1,"all_jets");
