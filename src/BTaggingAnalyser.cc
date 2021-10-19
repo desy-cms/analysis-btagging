@@ -172,3 +172,35 @@ void BTaggingAnalyser::btag_binning()
       bins_btag_.push_back(size*i);
    
 }
+bool BTaggingAnalyser::selectionLeadJets()
+{
+   bool ok = true;
+   for ( int j1 = 1; j1 <= this->config()->nJetsMin(); ++j1 )
+   {
+      if ( ! this->selectionJet(j1) ) 
+      {
+         ok = false;
+         break;
+      }
+   }
+   return ok;
+   
+}
+bool BTaggingAnalyser::selectionLeadJetsDphi()
+{
+   bool ok = true;
+   for ( int j1 = 1; j1 <= this->config()->nJetsMin(); ++j1 )
+   {
+      for ( int j2 = j1+1; j2 <= this->config()->nJetsMin(); ++j2 )
+      {
+         if ( ! this->selectionJetDphi(j1,j2) )
+         {
+            ok = false;
+            break;
+         }
+      }
+      if ( ! ok ) break;
+   }
+   return ok;
+   
+}
