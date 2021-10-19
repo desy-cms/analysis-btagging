@@ -29,21 +29,14 @@ int main(int argc, char ** argv)
       if ( ! analyser.selectionJetId()          )   continue;  // selection  : jet identification 
       if ( ! analyser.selectionJetPileupId()    )   continue;  // selection  : jet Pileup identification 
       if ( ! analyser.selectionNJets()          )   continue;  // selection  : number of jets 
-      if ( ! analyser.selectionJet(1)           )   continue;  // selection  : jet1 pt and eta 
-      if ( ! analyser.selectionJet(2)           )   continue;  // selection  : jet2 pt and eta 
-      if ( ! analyser.selectionJetDphi(1,2)     )   continue;  // selection  : delta_phi_jets (1,2) 
-      analyser.fillHistograms(1,"all_jets");
-      analyser.fillHistograms(2,"all_jets");
-      
-   // BTAG - test of btag only, no selection
+      if ( ! analyser.selectionLeadJets()       )   continue;
+      if ( ! analyser.selectionLeadJetsDphi()   )   continue;
+      // all jets histograms
+      for ( int j1 = 1; j1 <= config->nJetsMin(); ++j1 )
+         analyser.fillHistograms(j1,"all_jets");
+      // btag jets histograms
       for ( int j1 = 1; j1 <= config->nBJetsMin(); ++j1 )
-      {
-         if (   analyser.selectionBJet(j1)          )
-         {
-            float sf = analyser.getBtagSF(j1);  // only retrieve scale factor to be applied to histograms below
-            analyser.fillHistograms(j1,"btag_jets",sf);
-         }
-      }
+         if ( analyser.selectionBJet(j1) ) analyser.fillHistograms(j1,"btag_jets",analyser.getBtagSF(j1));
    }  //end event loop
    
 
