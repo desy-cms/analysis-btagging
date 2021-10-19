@@ -204,3 +204,21 @@ bool BTaggingAnalyser::selectionLeadJetsDphi()
    return ok;
    
 }
+bool BTaggingAnalyser::selectionLeadJetsDr()
+{
+   bool ok = true;
+   for ( int j1 = 1; j1 <= this->config()->nJetsMin(); ++j1 )
+   {
+      for ( int j2 = j1+1; j2 <= this->config()->nJetsMin(); ++j2 )
+      {
+         if ( ! this->selectionJetDr(j1,j2) )
+         {
+            ok = false;
+            break;
+         }
+      }
+      if ( ! ok ) break;
+   }
+   return ok;
+   
+}

@@ -56,6 +56,7 @@ namespace analysis {
             virtual void fillHistograms(const int & rank, const std::string & label, const float & sf=1);
             virtual bool selectionLeadJets();
             virtual bool selectionLeadJetsDphi();
+            virtual bool selectionLeadJetsDr();
 
       };
    }

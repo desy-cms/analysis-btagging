@@ -23,6 +23,7 @@ int main(int argc, char ** argv)
    {
       if ( ! analyser.event(i)                  )   continue;
       
+      
    // JETS
       analyser.actionApplyJER();                               // correction : jet energy resolution smearing
       analyser.actionApplyBjetRegression();                    // correction : jet energy regression (for b jets)
@@ -31,6 +32,7 @@ int main(int argc, char ** argv)
       if ( ! analyser.selectionNJets()          )   continue;  // selection  : number of jets 
       if ( ! analyser.selectionLeadJets()       )   continue;
       if ( ! analyser.selectionLeadJetsDphi()   )   continue;
+      if ( ! analyser.selectionLeadJetsDr()     )   continue;
       // all jets histograms
       for ( int j1 = 1; j1 <= config->nJetsMin(); ++j1 )
          analyser.fillHistograms(j1,"all_jets");
