@@ -23,21 +23,30 @@ int main(int argc, char ** argv)
    {
       if ( ! analyser.event(i)                  )   continue;
       
-   // Muons
+   // trigger
+      if ( ! analyser.selectionHLT()            )   continue;
+      if ( ! analyser.selectionL1 ()            )   continue;  // to be used mainly in case of "OR" of seeds
+      
+   // muons
       if ( ! analyser.selectionMuonId()         )   continue;
       if ( ! analyser.selectionNMuons()         )   continue;
       if ( ! analyser.selectionMuons()          )   continue;
       
-   // JETS
-      analyser.actionApplyJER();                               // correction : jet energy resolution smearing
-      analyser.actionApplyBjetRegression();                    // correction : jet energy regression (for b jets)
-      if ( ! analyser.selectionJetId()          )   continue;  // selection  : jet identification 
-      if ( ! analyser.selectionJetPileupId()    )   continue;  // selection  : jet Pileup identification 
-      if ( ! analyser.selectionNJets()          )   continue;  // selection  : number of jets 
+   // jets
+      analyser.actionApplyJER();                               
+      analyser.actionApplyBjetRegression();                    
+      if ( ! analyser.selectionJetId()          )   continue;  
+      if ( ! analyser.selectionJetPileupId()    )   continue;  
+      if ( ! analyser.selectionNJets()          )   continue;  
       if ( ! analyser.selectionLeadJets()       )   continue;
       if ( ! analyser.selectionLeadJetsDphi()   )   continue;
       if ( ! analyser.selectionLeadJetsDr()     )   continue;
+      // trigger matching
+      if ( ! analyser.onlineLeadJetsMatching()  )   continue;
+      if ( ! analyser.onlineLeadBJetsMatching() )   continue;
       if ( ! analyser.selectionLeadJetsMuon()   )   continue;
+//      if ( ! analyser.onlineMuonMatching()    )   continue;
+      
       // all jets histograms
       for ( int j1 = 1; j1 <= config->nJetsMin(); ++j1 )
          analyser.fillHistograms(j1,"all_jets");

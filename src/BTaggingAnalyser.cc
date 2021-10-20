@@ -236,3 +236,31 @@ bool BTaggingAnalyser::selectionLeadJetsMuon()
    return ok;
    
 }
+bool BTaggingAnalyser::onlineLeadJetsMatching()
+{
+   bool ok = true;
+   for ( int j1 = 1; j1 <= this->config()->triggerObjectsNJets(); ++j1 )
+   {
+      if ( ! this->onlineJetMatching(j1) )
+      {
+         ok = false;
+         break;
+      }
+   }
+   return ok;
+   
+}
+bool BTaggingAnalyser::onlineLeadBJetsMatching()
+{
+   bool ok = true;
+   for ( int j1 = 1; j1 <= this->config()->triggerObjectsNBJets(); ++j1 )
+   {
+      if ( ! this->onlineBJetMatching(j1) )
+      {
+         ok = false;
+         break;
+      }
+   }
+   return ok;
+   
+}
