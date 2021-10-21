@@ -31,6 +31,7 @@ int main(int argc, char ** argv)
       if ( ! analyser.selectionMuonId()         )   continue;
       if ( ! analyser.selectionNMuons()         )   continue;
       if ( ! analyser.selectionMuons()          )   continue;
+      if ( ! analyser.onlineMuonMatching()      )   continue;
       
    // jets
       analyser.actionApplyJER();                               
@@ -45,7 +46,6 @@ int main(int argc, char ** argv)
       if ( ! analyser.onlineLeadJetsMatching()  )   continue;
       if ( ! analyser.onlineLeadBJetsMatching() )   continue;
       if ( ! analyser.selectionLeadJetsMuon()   )   continue;
-//      if ( ! analyser.onlineMuonMatching()    )   continue;
       
       // all jets histograms
       for ( int j1 = 1; j1 <= config->nJetsMin(); ++j1 )
