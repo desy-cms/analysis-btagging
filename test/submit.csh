@@ -44,10 +44,9 @@ if ( $#argv == 5 ) then
    foreach sample ( $samples )
       set filelist = $filesdir'/'$sample'_rootFileList.txt'
       set output = 'histograms_'$sample'_'$name'.root'
-      naf_submit.py -e BTagEfficiency -c $cfg -n $filelist -o output -l $sample -x 1
+      naf_submit.py -e BTagEfficiency -c $cfg -n $filelist -o $output -l $sample -x 1
    end
    cd -
-   exit
 endif
 
 if ( $#argv == 6 ) then
@@ -69,12 +68,17 @@ if ( $#argv == 7 ) then
       if ( $option == "hadd" ) then
          cd $condor_dir
          hadd2.csh finished_jobs
+         cp -p histograms_*.root ../
          cd -
-         cp -p $condor_dir'/histograms_*.root' .
       endif
    end
    cd $mydir
 endif
 
+# queue status
+echo "--------------"
+echo "OWNER BATCH_NAME      SUBMITTED   DONE   RUN    IDLE   HOLD  TOTAL JOB_IDS"
+condor_q  | grep "$USER ID"
+echo tchau!
 
 exit
