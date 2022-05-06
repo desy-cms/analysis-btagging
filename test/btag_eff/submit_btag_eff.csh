@@ -17,9 +17,9 @@ if ( ! -d 'condor' ) then
 endif
 
 set name  = 'btag_eff_'$balgo'_'$bwp'_'$type'_'$year'_'$trg
-set samples = "QCD_HT100to200 QCD_HT200to300 QCD_HT300to500 QCD_HT500to700 QCD_HT700to1000 QCD_HT1500to2000 QCD_HT2000toInf"
+set samples = "QCD_HT100to200 QCD_HT200to300 QCD_HT300to500 QCD_HT500to700 QCD_HT700to1000 QCD_HT1000to1500 QCD_HT1500to2000 QCD_HT2000toInf"
 if ( $type == "sl" ) then
-   set samples = "QCD_Pt-50To80_MuEnrichedPt5 QCD_Pt-80To120_MuEnrichedPt5 QCD_Pt-120To170_MuEnrichedPt5 QCD_Pt-170To300_MuEnrichedPt5 QCD_Pt-300To470_MuEnrichedPt5 QCD_Pt-470To600_MuEnrichedPt5 QCD_Pt-600To800_MuEnrichedPt5 QCD_Pt-800To1000_MuEnrichedPt5 QCD_Pt-1000ToInf_MuEnrichedPt5"
+   set samples = "QCD_Pt-50To80_MuEnrichedPt5 QCD_Pt-80To120_MuEnrichedPt5 QCD_Pt-120To170_MuEnrichedPt5 QCD_Pt-170To300_MuEnrichedPt5 QCD_Pt-300To470_MuEnrichedPt5 QCD_Pt-470To600_MuEnrichedPt5 QCD_Pt-600To800_MuEnrichedPt5 QCD_Pt-800to1000_MuEnrichedPt5 QCD_Pt-1000toInf_MuEnrichedPt5"
 endif
 
 
@@ -39,7 +39,7 @@ if ( $#argv == 5 ) then
    cp -p $cfg condor/$timestamp
    cd condor/$timestamp
    # inputs   
-   set filesdir = '/afs/desy.de/user/w/walsh/issues/cms/10/dev/CMSSW_10_6_29/src/Analysis/Tools/data/ntuples/2017/v6/mc'
+   set filesdir = $CMSSW_BASE"/src/Analysis/Tools/data/ntuples/$year/v6/mc"
    # submit to naf   
    foreach sample ( $samples )
       set filelist = $filesdir'/'$sample'_rootFileList.txt'
