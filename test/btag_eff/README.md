@@ -56,6 +56,7 @@ QCD_HT2000toInf
 
 ## Results
 Once all jobs are finished, merge the root files, using the action `--hadd` instead of `--submit` in the command above.
-The results will be available in the `./results/label` directory. The `results` directory can be in `afs`, but the 
-recommendation for the `condor` directory also applies for `results`.
+The results will be available in the `./results/label` directory. 
+
+:warning: The `results` directory can be in `afs`, but the  recommendation for the `condor` directory also applies for `results`.
 
