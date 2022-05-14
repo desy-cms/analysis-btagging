@@ -42,7 +42,7 @@ To obtain the status of the submission, replace `--submit` by `status`. If jobs 
 Is a file containging information about the samples to be processed. The first line is the path to the rootFileList
 in `$CMSSW_BASE/src`. The other lines are the aliases of the samples, i.e. the prefix of the rootFileList.txt files:
 
-````
+```
 Analysis/Tools/data/ntuples/2017/v6/mc
 QCD_HT100to200
 QCD_HT200to300
