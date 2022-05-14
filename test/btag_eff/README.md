@@ -26,6 +26,9 @@ naming scheme: `btag_eff_<balgo>_<bwp>_<mode>_<year>_<trg>.cfg`
 It is recommended that you create it in `nfs` or a file system, other than `afs`, with large quota. Then link
 that directory in the `btag_eff` directory calling the link `condor`.
 
+N.B.: The `submit_btag.py` script uses the `naf_submit.py` script. Therefore you can use the functionalities of
+the latter script directly on each `Condor` directory.
+
 ### Example
 ```bash
 submit_btag.py \
