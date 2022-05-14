@@ -9,6 +9,10 @@ statistics, are used.
 
 ## Submit jobs
 
+Go to the directory 
+```bash 
+cd $CMSSW_BASE/src/Analysis/BTagging/test/btag_eff
+```
 You can use the script `submit_btag.py`. It considers that the configuration file name follows a
 naming scheme: `btag_eff_<balgo>_<bwp>_<mode>_<year>_<trg>.cfg`
 
@@ -17,6 +21,10 @@ naming scheme: `btag_eff_<balgo>_<bwp>_<mode>_<year>_<trg>.cfg`
 * `mode `: `fh` for fullhadronic, `sl` for semileptonic
 * `year `: year of data; e.g. `2017`
 * `trg  `: `trg` when trigger is used, `notrg` when no trigger is used
+
+:warning: In `$CMSSW_BASE/src/Analysis/BTagging/test/btag_eff` you need to create a directory called `condor`.
+It is recommended that you create it in `nfs` or a file system, other than `afs`, with large quota. Then link
+that directory in the `btag_eff` directory calling the link `condor`.
 
 ### Example
 ```bash
@@ -48,4 +56,6 @@ QCD_HT2000toInf
 
 ## Results
 Once all jobs are finished, merge the root files, using the action `--hadd` instead of `--submit` in the command above.
-The results will be available in the `./results/label` directory
+The results will be available in the `./results/label` directory. The `results` directory can be in `afs`, but the 
+recommendation for the `condor` directory also applies for `results`.
+
