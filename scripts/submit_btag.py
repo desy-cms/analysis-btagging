@@ -14,11 +14,12 @@ year : year of data
 trg  : trg when trigger is used, notrg when no trigger is used
 '''
 
-parser = ArgumentParser(prog='submit_btag_eff.py', formatter_class=lambda prog: HelpFormatter(prog,indent_increment=6,max_help_position=80,width=280), description=arg_desc,add_help=True)
+parser = ArgumentParser(prog='submit_btag.py', formatter_class=lambda prog: HelpFormatter(prog,indent_increment=6,max_help_position=80,width=280), description=arg_desc,add_help=True)
 parser.add_argument('--exe'       , dest='exe'            , required= True          , help='Executable')
 parser.add_argument('--cfg'       , dest='cfg'            , required= True          , help='Configuration file')
 parser.add_argument('--label'     , dest='label'          , required= True          , help='Unique label to identify the submission')
 parser.add_argument('--samples'   , dest='samples'        , required= True          , help='File containing samples to be processed')
+parser.add_argument('--btagweight', dest='btagweight'     , action='store_true'     , help='apply btag weight')
 parser.add_argument('--submit'    , dest='submit'         , action='store_true'     , help='submit jobs')
 parser.add_argument('--status'    , dest='status'         , action='store_true'     , help='status of the jobs')
 parser.add_argument('--resubmit'  , dest='resubmit'       , action='store_true'     , help='resubmit failed jobs')
@@ -55,8 +56,12 @@ contents = [x.replace(' ','') for x in contents]
 contents = [x for x in contents if not x.startswith('#') and x != '']
 samples_dir = contents[0]
 samples = contents[1:]
+## btagweight
+btw = args.btagweight
 ## Label
 label = args.label
+if btw:
+   label = '{}_btagweight'.format(label)
 ## Executable
 exe = args.exe
 ## Actions
@@ -82,7 +87,7 @@ mode  = info['mode']
 balgo = info['balgo']
 bwp   = info['bwp']
 
-name = 'btag_eff_{}_{}_{}_{}_{}'.format(balgo,bwp,mode,year,trg)
+name = '{}_{}_{}_{}_{}_{}'.format(info['cfg'],balgo,bwp,mode,year,trg)
 label_dir = 'condor/{}'.format(label)
 cmssw_base  = os.getenv('CMSSW_BASE')
 files_dir = '{}/src/{}'.format(cmssw_base,samples_dir)
@@ -95,11 +100,18 @@ if command == 'submit':
    if not os.path.isdir(label_dir):
       os.mkdir(label_dir)
    shutil.copy(cfg, label_dir)
+   submit_command = 'submit_btag.py --exe {} --cfg {} --label {} --samples {} --submit \n'.format(exe,cfg,label,samples_file)
+   if btw:
+      submit_command = 'submit_btag.py --exe {} --cfg {} --label {} --samples {} --btagweight --submit \n'.format(exe,cfg,label,samples_file)
+   with open('{}/submit_commands.log'.format(label_dir), 'a') as file_command:  # append mode
+      file_command.write(submit_command)
    os.chdir(label_dir)
    for sample in samples:
       filelist = '{}/{}_rootFileList.txt'.format(files_dir,sample)
       output = 'histograms_{}_{}.root'.format(sample,name)
       exe_cmd = 'naf_submit.py -e {} -c {} -n {} -o {} -l {} -x 1'.format(exe,cfg,filelist,output,sample)
+      if btw:
+         exe_cmd = 'naf_submit.py -e {} -c {} -n {} -o {} -l {} -x 1 --opts xx_btagweight'.format(exe,cfg,filelist,output,sample)
       os.system(exe_cmd)
    os.chdir(cwd)
  
