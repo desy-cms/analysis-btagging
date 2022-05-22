@@ -1,0 +1,9 @@
+Analysis/Tools/data/ntuples/2017/v6/mc
+QCD_HT100to200_BGenFilter
+QCD_HT200to300_BGenFilter
+QCD_HT300to500_BGenFilter
+QCD_HT500to700_BGenFilter
+QCD_HT700to1000_BGenFilter
+QCD_HT1000to1500_BGenFilter
+QCD_HT1500to2000_BGenFilter
+QCD_HT2000toInf_BGenFilter
