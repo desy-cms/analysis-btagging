@@ -2,10 +2,12 @@
 import sys,os
 from Analysis.Tools.utils import Process
 from Analysis.BTagging.utils import BTagEfficiency
-from ROOT import TCanvas, TMultiGraph, TSpline3, TSpline5, TSpline, TGraphSmooth, TFile
-from ROOT import kRed, kBlue, kBlack, kMagenta, kGreen, kCyan
+from ROOT import TCanvas, TMultiGraph, TSpline3, TSpline5, TSpline, TGraphSmooth, TFile, TH1
+from ROOT import kRed, kBlue, kBlack, kMagenta, kGreen, kCyan, kOrange
 import array
 from rootpy.interactive import wait
+
+TH1.SetDefaultSumw2()
 
 myproc = str(sys.argv[1])
 directory = str(sys.argv[2])
@@ -24,6 +26,7 @@ qcd = Process(myproc,directory)
 
 btageff = BTagEfficiency(process=qcd)
 flavours = btageff.flavours()
+#etabins = [0.0,0.9,1.1,1.35,1.5,1.6,2.0,2.2]
 etabins = [0.0,1.3,1.6,2.0,2.2]
 etaranges = []
 ptmin = 30.
@@ -32,7 +35,7 @@ for i in range(len(etabins)-1):
    etamin = etabins[i]
    etamax = etabins[i+1]
    etaranges.append('%3.1f-%3.1f' % (etamin,etamax))
-colors = [kBlue,kBlack,kRed,kGreen+1,kMagenta,kCyan]
+colors = [kBlue,kBlack,kRed,kGreen+1,kMagenta,kCyan,kOrange]
 xbins = []
 s0 = 10
 s1 = 20
@@ -200,4 +203,4 @@ for flv in flavours:
 f_g.Close()
 
 print('The End')
-#wait(True) # close with middle mouse button
+wait(True) # close with middle mouse button
